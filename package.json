@@ -1,0 +1,26 @@
+{
+  "name": "hotel-employee-ms-root",
+  "version": "1.0.0",
+  "description": "Noru Hotel Employee Management System - MERN Stack",
+  "scripts": {
+    "backend": "npm --prefix backend start",
+    "backend:dev": "npm --prefix backend run dev",
+    "backend:seed": "npm --prefix backend run seed",
+    "frontend": "npm --prefix frontend run dev",
+    "frontend:build": "npm --prefix frontend run build",
+    "install:all": "npm --prefix backend install && npm --prefix frontend install"
+  },
+  "keywords": [
+    "hotel-management",
+    "mern",
+    "mongodb",
+    "express",
+    "react",
+    "vite",
+    "nodejs",
+    "attendance",
+    "shifts"
+  ],
+  "author": "Noru Hotel Engineering Challenge",
+  "license": "MIT"
+}
