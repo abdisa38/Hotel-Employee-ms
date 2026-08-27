@@ -60,6 +60,11 @@ const employeeSchema = new mongoose.Schema(
       default: 'Active',
       index: true,
     },
+    salary: {
+      type: Number,
+      default: null,
+      min: [0, 'Salary cannot be negative'],
+    },
     avatarUrl: {
       type: String,
       default: '',

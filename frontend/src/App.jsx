@@ -15,6 +15,7 @@ export default function App() {
   const [isQuickPunchOpen, setIsQuickPunchOpen] = useState(false);
   const [isAddEmployeeOpen, setIsAddEmployeeOpen] = useState(false);
   const [employees, setEmployees] = useState([]);
+  const [punchRefreshKey, setPunchRefreshKey] = useState(0);
 
   const loadStaffList = async () => {
     try {
@@ -28,6 +29,12 @@ export default function App() {
   useEffect(() => {
     loadStaffList();
   }, []);
+
+  const handlePunchSuccess = () => {
+    loadStaffList();
+    // Trigger immediate reload across Dashboard and Attendance tables
+    setPunchRefreshKey((prev) => prev + 1);
+  };
 
   return (
     <div className="flex min-h-screen bg-slate-50 text-slate-900">
@@ -48,6 +55,7 @@ export default function App() {
         <main className="flex-1 p-6 max-w-7xl w-full mx-auto">
           {activeTab === 'dashboard' && (
             <DashboardPage
+              refreshTrigger={punchRefreshKey}
               onQuickPunchClick={() => setIsQuickPunchOpen(true)}
               onNavigateTab={(tab) => setActiveTab(tab)}
             />
@@ -65,7 +73,10 @@ export default function App() {
           {activeTab === 'shifts' && <ShiftsPage />}
 
           {activeTab === 'attendance' && (
-            <AttendancePage onQuickPunchClick={() => setIsQuickPunchOpen(true)} />
+            <AttendancePage
+              refreshTrigger={punchRefreshKey}
+              onQuickPunchClick={() => setIsQuickPunchOpen(true)}
+            />
           )}
 
           {activeTab === 'reports' && <ReportsPage />}
@@ -77,9 +88,7 @@ export default function App() {
         isOpen={isQuickPunchOpen}
         onClose={() => setIsQuickPunchOpen(false)}
         employees={employees}
-        onPunchSuccess={() => {
-          loadStaffList();
-        }}
+        onPunchSuccess={handlePunchSuccess}
       />
     </div>
   );

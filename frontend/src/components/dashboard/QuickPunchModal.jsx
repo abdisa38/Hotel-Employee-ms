@@ -5,7 +5,7 @@ import { clockIn, clockOut } from '../../api';
 export default function QuickPunchModal({ isOpen, onClose, employees, onPunchSuccess }) {
   const [selectedEmpId, setSelectedEmpId] = useState('');
   const [notes, setNotes] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [activeAction, setActiveAction] = useState(null); // 'in' | 'out' | null
   const [message, setMessage] = useState(null);
 
   if (!isOpen) return null;
@@ -16,7 +16,7 @@ export default function QuickPunchModal({ isOpen, onClose, employees, onPunchSuc
       return;
     }
 
-    setLoading(true);
+    setActiveAction(actionType);
     setMessage(null);
 
     try {
@@ -29,18 +29,21 @@ export default function QuickPunchModal({ isOpen, onClose, employees, onPunchSuc
       }
 
       setNotes('');
+      // Trigger instant table reload on parent page immediately
       if (onPunchSuccess) onPunchSuccess();
+      
       setTimeout(() => {
         onClose();
         setMessage(null);
-      }, 1200);
+        setSelectedEmpId('');
+      }, 900);
     } catch (err) {
       setMessage({
         type: 'error',
         text: err.response?.data?.message || 'Failed to record attendance',
       });
     } finally {
-      setLoading(false);
+      setActiveAction(null);
     }
   };
 
@@ -115,19 +118,19 @@ export default function QuickPunchModal({ isOpen, onClose, employees, onPunchSuc
           <div className="grid grid-cols-2 gap-3 pt-2">
             <button
               onClick={() => handleAction('in')}
-              disabled={loading || !selectedEmpId}
+              disabled={!!activeAction || !selectedEmpId}
               className="flex items-center justify-center gap-2 py-2.5 px-4 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white rounded-lg text-xs font-semibold shadow-sm transition"
             >
-              {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <LogIn className="w-4 h-4" />}
+              {activeAction === 'in' ? <Loader2 className="w-4 h-4 animate-spin" /> : <LogIn className="w-4 h-4" />}
               <span>Clock In</span>
             </button>
 
             <button
               onClick={() => handleAction('out')}
-              disabled={loading || !selectedEmpId}
+              disabled={!!activeAction || !selectedEmpId}
               className="flex items-center justify-center gap-2 py-2.5 px-4 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white rounded-lg text-xs font-semibold shadow-sm transition"
             >
-              {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <LogOut className="w-4 h-4" />}
+              {activeAction === 'out' ? <Loader2 className="w-4 h-4 animate-spin" /> : <LogOut className="w-4 h-4" />}
               <span>Clock Out</span>
             </button>
           </div>

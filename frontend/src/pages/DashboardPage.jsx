@@ -25,7 +25,7 @@ import { getTodaySummary, getAttendance, getDepartmentAnalytics, getShifts } fro
 
 const COLORS = ['#2563eb', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899'];
 
-export default function DashboardPage({ onQuickPunchClick, onNavigateTab }) {
+export default function DashboardPage({ onQuickPunchClick, onNavigateTab, refreshTrigger }) {
   const [summary, setSummary] = useState(null);
   const [todayAttendance, setTodayAttendance] = useState([]);
   const [departmentStats, setDepartmentStats] = useState([]);
@@ -56,7 +56,7 @@ export default function DashboardPage({ onQuickPunchClick, onNavigateTab }) {
 
   useEffect(() => {
     loadData();
-  }, []);
+  }, [refreshTrigger]);
 
   const departmentChartData = departmentStats.map((d) => ({
     name: d.departmentCode || d.departmentName,

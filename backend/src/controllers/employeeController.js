@@ -108,6 +108,7 @@ export const createEmployee = async (req, res, next) => {
       shift,
       hireDate,
       status,
+      salary,
       avatarUrl,
     } = req.body;
 
@@ -133,6 +134,7 @@ export const createEmployee = async (req, res, next) => {
       shift,
       hireDate: hireDate || new Date(),
       status: status || 'Active',
+      salary: salary !== undefined && salary !== '' ? Number(salary) : (roleExists.baseSalary || 0),
       avatarUrl,
     });
 
@@ -161,6 +163,7 @@ export const updateEmployee = async (req, res, next) => {
       shift,
       hireDate,
       status,
+      salary,
       avatarUrl,
     } = req.body;
 
@@ -177,6 +180,7 @@ export const updateEmployee = async (req, res, next) => {
         shift,
         hireDate,
         status,
+        salary: salary !== undefined && salary !== '' ? Number(salary) : null,
         avatarUrl,
       },
       { new: true, runValidators: true }

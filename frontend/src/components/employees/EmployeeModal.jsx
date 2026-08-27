@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, Save, AlertCircle, Loader2 } from 'lucide-react';
+import { X, Save, AlertCircle, Loader2, DollarSign } from 'lucide-react';
 import { createEmployee, updateEmployee } from '../../api';
 
 export default function EmployeeModal({
@@ -20,6 +20,7 @@ export default function EmployeeModal({
     department: '',
     role: '',
     shift: '',
+    salary: '',
     hireDate: new Date().toISOString().split('T')[0],
     status: 'Active',
   });
@@ -38,10 +39,12 @@ export default function EmployeeModal({
         department: employee.department?._id || employee.department || '',
         role: employee.role?._id || employee.role || '',
         shift: employee.shift?._id || employee.shift || '',
+        salary: employee.salary || employee.role?.baseSalary || '',
         hireDate: employee.hireDate ? employee.hireDate.split('T')[0] : '',
         status: employee.status || 'Active',
       });
     } else {
+      const defaultRole = roles[0];
       setFormData({
         employeeId: `EMP-${Math.floor(1000 + Math.random() * 9000)}`,
         firstName: '',
@@ -49,8 +52,9 @@ export default function EmployeeModal({
         email: '',
         phone: '',
         department: departments[0]?._id || '',
-        role: roles[0]?._id || '',
+        role: defaultRole?._id || '',
         shift: shifts[0]?._id || '',
+        salary: defaultRole?.baseSalary || '',
         hireDate: new Date().toISOString().split('T')[0],
         status: 'Active',
       });
@@ -66,6 +70,15 @@ export default function EmployeeModal({
         (r) => (r.department?._id || r.department || '').toString() === formData.department.toString()
       )
     : roles;
+
+  const handleRoleChange = (roleId) => {
+    const foundRole = roles.find((r) => r._id === roleId);
+    setFormData({
+      ...formData,
+      role: roleId,
+      salary: foundRole?.baseSalary !== undefined ? foundRole.baseSalary : formData.salary,
+    });
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -96,7 +109,7 @@ export default function EmployeeModal({
             <h3 className="font-semibold text-slate-800 text-base">
               {employee ? 'Edit Employee Details' : 'Add New Employee'}
             </h3>
-            <p className="text-xs text-slate-500">Fill in staff member information</p>
+            <p className="text-xs text-slate-500">Fill in staff member profile and compensation</p>
           </div>
           <button
             onClick={onClose}
@@ -152,6 +165,7 @@ export default function EmployeeModal({
               <input
                 type="text"
                 required
+                placeholder="e.g. Abdisa"
                 value={formData.firstName}
                 onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
                 className="w-full text-xs rounded-lg border border-slate-300 px-3 py-2 text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -164,6 +178,7 @@ export default function EmployeeModal({
               <input
                 type="text"
                 required
+                placeholder="e.g. Awel"
                 value={formData.lastName}
                 onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
                 className="w-full text-xs rounded-lg border border-slate-300 px-3 py-2 text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -179,6 +194,7 @@ export default function EmployeeModal({
               <input
                 type="email"
                 required
+                placeholder="abdisa.awel@noruhotel.com"
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                 className="w-full text-xs rounded-lg border border-slate-300 px-3 py-2 text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -191,6 +207,7 @@ export default function EmployeeModal({
               <input
                 type="text"
                 required
+                placeholder="+251 91 123 4567"
                 value={formData.phone}
                 onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                 className="w-full text-xs rounded-lg border border-slate-300 px-3 py-2 text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -211,10 +228,12 @@ export default function EmployeeModal({
                   const matchingRoles = roles.filter(
                     (r) => (r.department?._id || r.department || '').toString() === newDept.toString()
                   );
+                  const newRole = matchingRoles[0];
                   setFormData({
                     ...formData,
                     department: newDept,
-                    role: matchingRoles[0]?._id || '',
+                    role: newRole?._id || '',
+                    salary: newRole?.baseSalary || formData.salary,
                   });
                 }}
                 className="w-full text-xs rounded-lg border border-slate-300 px-2.5 py-2 bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -235,7 +254,7 @@ export default function EmployeeModal({
               <select
                 required
                 value={formData.role}
-                onChange={(e) => setFormData({ ...formData, role: e.target.value })}
+                onChange={(e) => handleRoleChange(e.target.value)}
                 className="w-full text-xs rounded-lg border border-slate-300 px-2.5 py-2 bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 <option value="">Select</option>
@@ -267,14 +286,30 @@ export default function EmployeeModal({
             </div>
           </div>
 
-          <div>
-            <label className="block text-xs font-semibold text-slate-700 mb-1">Hire Date</label>
-            <input
-              type="date"
-              value={formData.hireDate}
-              onChange={(e) => setFormData({ ...formData, hireDate: e.target.value })}
-              className="w-full text-xs rounded-lg border border-slate-300 px-3 py-2 text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-xs font-semibold text-slate-700 mb-1">Hire Date</label>
+              <input
+                type="date"
+                value={formData.hireDate}
+                onChange={(e) => setFormData({ ...formData, hireDate: e.target.value })}
+                className="w-full text-xs rounded-lg border border-slate-300 px-3 py-2 text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs font-semibold text-slate-700 mb-1">
+                Monthly Salary ($/month)
+              </label>
+              <input
+                type="number"
+                min="0"
+                placeholder="e.g. 2800"
+                value={formData.salary}
+                onChange={(e) => setFormData({ ...formData, salary: e.target.value })}
+                className="w-full text-xs rounded-lg border border-slate-300 px-3 py-2 text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
           </div>
 
           {/* Footer Buttons */}

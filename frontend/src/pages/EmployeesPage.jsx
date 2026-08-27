@@ -299,7 +299,7 @@ export default function EmployeesPage({ onAddClick, isAddModalOpen, setIsAddModa
                     </td>
 
                     <td className="py-3.5 px-4 font-mono font-medium text-slate-700">
-                      ${emp.role?.baseSalary ? emp.role.baseSalary.toLocaleString() : '0'}/mo
+                      ${(emp.salary !== undefined && emp.salary !== null ? emp.salary : (emp.role?.baseSalary || 0)).toLocaleString()}/mo
                     </td>
 
                     <td className="py-3.5 px-4">

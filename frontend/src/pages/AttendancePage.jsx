@@ -25,7 +25,7 @@ import {
 } from '../api';
 import DeleteConfirmModal from '../components/common/DeleteConfirmModal';
 
-export default function AttendancePage({ onQuickPunchClick }) {
+export default function AttendancePage({ onQuickPunchClick, refreshTrigger }) {
   const [attendanceList, setAttendanceList] = useState([]);
   const [employees, setEmployees] = useState([]);
   const [departments, setDepartments] = useState([]);
@@ -79,7 +79,7 @@ export default function AttendancePage({ onQuickPunchClick }) {
 
   useEffect(() => {
     loadData();
-  }, [selectedDate, selectedDept, selectedStatus]);
+  }, [selectedDate, selectedDept, selectedStatus, refreshTrigger]);
 
   const handleManualSubmit = async (e) => {
     e.preventDefault();
