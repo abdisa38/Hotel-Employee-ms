@@ -1,10 +1,18 @@
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
+import dns from 'node:dns';
 import { Department } from '../models/Department.js';
 import { Role } from '../models/Role.js';
 import { Shift } from '../models/Shift.js';
 import { Employee } from '../models/Employee.js';
 import { Attendance } from '../models/Attendance.js';
+
+// Fix for Windows DNS resolution with MongoDB SRV records
+try {
+  dns.setServers(['8.8.8.8', '1.1.1.1']);
+} catch (e) {
+  // fallback silently
+}
 
 dotenv.config();
 
@@ -355,12 +363,10 @@ const seedDatabase = async () => {
       const dateStr = targetDate.toISOString().split('T')[0];
 
       for (const emp of employees) {
-        // Find employee shift
         const shiftObj = shifts.find((s) => s._id.toString() === emp.shift.toString());
         const [startH, startM] = (shiftObj ? shiftObj.startTime : '08:00').split(':').map(Number);
         const [endH, endM] = (shiftObj ? shiftObj.endTime : '16:00').split(':').map(Number);
 
-        // Deterministic simulation based on day and employee id
         const hash = (emp.employeeId.charCodeAt(6) || 0) + dayOffset;
         const roll = hash % 20;
 
@@ -371,12 +377,10 @@ const seedDatabase = async () => {
         let notes = '';
 
         if (roll === 0) {
-          // Absent
           status = 'Absent';
           workHours = 0;
           notes = 'Unplanned absence';
         } else if (roll === 1 || roll === 2) {
-          // Late
           status = 'Late';
           const lateMinutes = 20 + (roll * 15);
           checkIn = new Date(targetDate);
@@ -386,7 +390,6 @@ const seedDatabase = async () => {
           workHours = Math.max(0, Number(((8 * 60 - lateMinutes) / 60).toFixed(1)));
           notes = `Arrived ${lateMinutes} minutes late`;
         } else if (roll === 3) {
-          // Half-day
           status = 'Half-day';
           checkIn = new Date(targetDate);
           checkIn.setHours(startH, startM, 0, 0);
@@ -395,9 +398,8 @@ const seedDatabase = async () => {
           workHours = 4;
           notes = 'Authorized early leave';
         } else {
-          // Punctual Present
           status = 'Present';
-          const earlyMinutes = (hash % 10) - 5; // Arrived -5 to +4 minutes
+          const earlyMinutes = (hash % 10) - 5;
           checkIn = new Date(targetDate);
           checkIn.setHours(startH, startM + Math.min(earlyMinutes, 10), 0, 0);
           checkOut = new Date(targetDate);
