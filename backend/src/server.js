@@ -16,10 +16,7 @@ import reportRoutes from './routes/reportRoutes.js';
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 5000;
-
-// Connect to MongoDB
-connectDB();
+const PORT = process.env.PORT || 5005;
 
 // Middleware
 app.use(cors({ origin: true, credentials: true }));
@@ -50,6 +47,15 @@ app.use('/api/reports', reportRoutes);
 app.use(notFound);
 app.use(errorHandler);
 
-app.listen(PORT, () => {
-  console.log(`[Server] Hotel EMS Backend running on port ${PORT}`);
-});
+const startServer = async () => {
+  try {
+    await connectDB();
+    app.listen(PORT, () => {
+      console.log(`[Server] Hotel EMS Backend running on port ${PORT}`);
+    });
+  } catch (err) {
+    console.error(`[Server Error] Failed to start: ${err.message}`);
+  }
+};
+
+startServer();
