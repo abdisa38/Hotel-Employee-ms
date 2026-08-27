@@ -116,11 +116,19 @@ export default function AttendancePage({ onQuickPunchClick }) {
 
   const openEditModal = (rec) => {
     setEditingRecord(rec);
+    const formatLocalTime = (d) => {
+      if (!d) return '';
+      const dateObj = new Date(d);
+      const hours = String(dateObj.getHours()).padStart(2, '0');
+      const minutes = String(dateObj.getMinutes()).padStart(2, '0');
+      return `${hours}:${minutes}`;
+    };
+
     setLogForm({
       employeeId: rec.employee?._id || '',
       date: rec.date,
-      checkIn: rec.checkIn ? new Date(rec.checkIn).toISOString().slice(11, 16) : '',
-      checkOut: rec.checkOut ? new Date(rec.checkOut).toISOString().slice(11, 16) : '',
+      checkIn: formatLocalTime(rec.checkIn),
+      checkOut: formatLocalTime(rec.checkOut),
       status: rec.status || 'Present',
       notes: rec.notes || '',
     });
