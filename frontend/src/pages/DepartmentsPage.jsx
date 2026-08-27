@@ -501,8 +501,8 @@ export default function DepartmentsPage() {
         title={deleteTarget?.type === 'dept' ? 'Delete Department' : 'Delete Role'}
         message={
           deleteTarget?.type === 'dept'
-            ? `Delete department '${deleteTarget.item?.name}'? Note: Departments with active employees cannot be deleted.`
-            : `Delete role '${deleteTarget.item?.title}'? Note: Roles assigned to active employees cannot be deleted.`
+            ? `Delete department '${deleteTarget?.item?.name || ''}'? Note: Departments with active employees cannot be deleted.`
+            : `Delete role '${deleteTarget?.item?.title || ''}'? Note: Roles assigned to active employees cannot be deleted.`
         }
       />
     </div>
