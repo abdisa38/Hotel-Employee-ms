@@ -11,6 +11,24 @@ export const getTodayDateString = () => {
   return `${year}-${month}-${day}`;
 };
 
+// Helper: Parse time string ("HH:mm") or ISO string with a date
+const parseDateTime = (dateStr, timeStr) => {
+  if (!timeStr) return null;
+  if (timeStr.includes('T')) {
+    const parsed = new Date(timeStr);
+    return isNaN(parsed.getTime()) ? null : parsed;
+  }
+  const parts = timeStr.split(':');
+  if (parts.length < 2) return null;
+  const h = parseInt(parts[0], 10);
+  const m = parseInt(parts[1], 10);
+  if (isNaN(h) || isNaN(m)) return null;
+
+  const [year, month, day] = dateStr.split('-').map(Number);
+  const d = new Date(year, month - 1, day, h, m, 0, 0);
+  return isNaN(d.getTime()) ? null : d;
+};
+
 export const getAttendance = async (req, res, next) => {
   try {
     const { date, employee, department, status, startDate, endDate } = req.query;
@@ -39,10 +57,12 @@ export const getAttendance = async (req, res, next) => {
       .populate('shift', 'name code startTime endTime')
       .sort({ date: -1, createdAt: -1 });
 
-    // Optional filter by department (through populated employee)
     if (department) {
       attendanceRecords = attendanceRecords.filter(
-        (record) => record.employee && record.employee.department && record.employee.department._id.toString() === department
+        (record) =>
+          record.employee &&
+          record.employee.department &&
+          record.employee.department._id.toString() === department
       );
     }
 
@@ -81,7 +101,10 @@ export const getTodaySummary = async (req, res, next) => {
         halfDayCount,
         clockedInCount,
         unrecordedCount,
-        attendanceRate: activeEmployees > 0 ? Number(((clockedInCount / activeEmployees) * 100).toFixed(1)) : 0,
+        attendanceRate:
+          activeEmployees > 0
+            ? Number(((clockedInCount / activeEmployees) * 100).toFixed(1))
+            : 0,
       },
     });
   } catch (error) {
@@ -103,7 +126,9 @@ export const clockIn = async (req, res, next) => {
     if (attendance && attendance.checkIn) {
       return res.status(400).json({
         success: false,
-        message: `Employee ${employee.firstName} has already clocked in today at ${new Date(attendance.checkIn).toLocaleTimeString()}`,
+        message: `Employee ${employee.firstName} has already clocked in today at ${new Date(
+          attendance.checkIn
+        ).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`,
       });
     }
 
@@ -147,7 +172,7 @@ export const clockIn = async (req, res, next) => {
 
     res.status(200).json({
       success: true,
-      message: `Clock-in recorded. Status: ${status}`,
+      message: `Clock-in recorded for ${employee.firstName} ${employee.lastName}. Status: ${status}`,
       data: populated,
     });
   } catch (error) {
@@ -171,7 +196,9 @@ export const clockOut = async (req, res, next) => {
     if (attendance.checkOut) {
       return res.status(400).json({
         success: false,
-        message: `Employee has already clocked out today at ${new Date(attendance.checkOut).toLocaleTimeString()}`,
+        message: `Employee has already clocked out today at ${new Date(
+          attendance.checkOut
+        ).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`,
       });
     }
 
@@ -205,7 +232,7 @@ export const manualRecord = async (req, res, next) => {
     const { employeeId, date, checkIn, checkOut, status, notes, shiftId } = req.body;
 
     if (!employeeId || !date) {
-      return res.status(400).json({ success: false, message: 'employeeId and date are required' });
+      return res.status(400).json({ success: false, message: 'Employee and date are required' });
     }
 
     const employee = await Employee.findById(employeeId);
@@ -213,20 +240,29 @@ export const manualRecord = async (req, res, next) => {
       return res.status(404).json({ success: false, message: 'Employee not found' });
     }
 
+    const checkInDate = parseDateTime(date, checkIn);
+    const checkOutDate = parseDateTime(date, checkOut);
+
     let workHours = 0;
-    if (checkIn && checkOut) {
-      const diffMs = new Date(checkOut).getTime() - new Date(checkIn).getTime();
+    if (checkInDate && checkOutDate) {
+      const diffMs = checkOutDate.getTime() - checkInDate.getTime();
       workHours = Math.max(0, Number((diffMs / (1000 * 60 * 60)).toFixed(2)));
+    } else if (status === 'Present' || status === 'Late') {
+      workHours = 8.0;
+    } else if (status === 'Half-day') {
+      workHours = 4.0;
     }
+
+    const assignedShift = shiftId && shiftId.trim() !== '' ? shiftId : employee.shift;
 
     const record = await Attendance.findOneAndUpdate(
       { employee: employeeId, date },
       {
         employee: employeeId,
         date,
-        shift: shiftId || employee.shift,
-        checkIn: checkIn ? new Date(checkIn) : null,
-        checkOut: checkOut ? new Date(checkOut) : null,
+        shift: assignedShift,
+        checkIn: checkInDate,
+        checkOut: checkOutDate,
         workHours,
         status: status || 'Present',
         notes: notes || '',
@@ -244,7 +280,7 @@ export const manualRecord = async (req, res, next) => {
       { path: 'shift', select: 'name code startTime endTime' },
     ]);
 
-    res.json({ success: true, data: record });
+    res.json({ success: true, message: 'Attendance record saved successfully.', data: record });
   } catch (error) {
     next(error);
   }
@@ -256,7 +292,7 @@ export const deleteAttendance = async (req, res, next) => {
     if (!record) {
       return res.status(404).json({ success: false, message: 'Attendance record not found' });
     }
-    res.json({ success: true, message: 'Attendance record deleted' });
+    res.json({ success: true, message: 'Attendance record deleted successfully' });
   } catch (error) {
     next(error);
   }

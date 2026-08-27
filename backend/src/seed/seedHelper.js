@@ -11,7 +11,7 @@ export const autoSeed = async () => {
     return;
   }
 
-  console.log('[Seed Helper] Database is empty. Seeding initial hotel dataset...');
+  console.log('[Seed Helper] Database is empty. Seeding initial hotel dataset with Ethiopian staff profiles...');
 
   // 1. Departments
   const departments = await Department.create([
@@ -151,14 +151,14 @@ export const autoSeed = async () => {
   const roleMap = {};
   roles.forEach((r) => (roleMap[r.title] = r._id));
 
-  // 4. Employees
+  // 4. Employees with Ethiopian Names
   const employees = await Employee.create([
     {
       employeeId: 'EMP-1001',
-      firstName: 'Alexander',
-      lastName: 'Wright',
-      email: 'alexander.wright@noruhotel.com',
-      phone: '+1 (555) 234-5671',
+      firstName: 'Abdisa',
+      lastName: 'Awel',
+      email: 'abdisa.awel@noruhotel.com',
+      phone: '+251 91 123 4567',
       department: deptMap['FO'],
       role: roleMap['Front Office Manager'],
       shift: shiftMap['MORN'],
@@ -166,10 +166,10 @@ export const autoSeed = async () => {
     },
     {
       employeeId: 'EMP-1002',
-      firstName: 'Elena',
-      lastName: 'Rostova',
-      email: 'elena.rostova@noruhotel.com',
-      phone: '+1 (555) 234-5672',
+      firstName: 'Selamawit',
+      lastName: 'Alemu',
+      email: 'selamawit.alemu@noruhotel.com',
+      phone: '+251 91 234 5678',
       department: deptMap['FO'],
       role: roleMap['Receptionist'],
       shift: shiftMap['MORN'],
@@ -177,10 +177,10 @@ export const autoSeed = async () => {
     },
     {
       employeeId: 'EMP-1003',
-      firstName: 'Marcus',
-      lastName: 'Vance',
-      email: 'marcus.vance@noruhotel.com',
-      phone: '+1 (555) 234-5673',
+      firstName: 'Bekele',
+      lastName: 'Tadesse',
+      email: 'bekele.tadesse@noruhotel.com',
+      phone: '+251 91 345 6789',
       department: deptMap['FO'],
       role: roleMap['Receptionist'],
       shift: shiftMap['AFTN'],
@@ -188,10 +188,10 @@ export const autoSeed = async () => {
     },
     {
       employeeId: 'EMP-1004',
-      firstName: 'Sophia',
-      lastName: 'Chen',
-      email: 'sophia.chen@noruhotel.com',
-      phone: '+1 (555) 234-5674',
+      firstName: 'Tigist',
+      lastName: 'Mengistu',
+      email: 'tigist.mengistu@noruhotel.com',
+      phone: '+251 91 456 7890',
       department: deptMap['FO'],
       role: roleMap['Concierge'],
       shift: shiftMap['MORN'],
@@ -199,10 +199,10 @@ export const autoSeed = async () => {
     },
     {
       employeeId: 'EMP-1005',
-      firstName: 'Maria',
-      lastName: 'Santos',
-      email: 'maria.santos@noruhotel.com',
-      phone: '+1 (555) 345-6781',
+      firstName: 'Meron',
+      lastName: 'Tesfaye',
+      email: 'meron.tesfaye@noruhotel.com',
+      phone: '+251 92 123 4567',
       department: deptMap['HK'],
       role: roleMap['Housekeeping Supervisor'],
       shift: shiftMap['MORN'],
@@ -210,10 +210,10 @@ export const autoSeed = async () => {
     },
     {
       employeeId: 'EMP-1006',
-      firstName: 'David',
-      lastName: 'Kowalski',
-      email: 'david.kowalski@noruhotel.com',
-      phone: '+1 (555) 345-6782',
+      firstName: 'Dawit',
+      lastName: 'Haile',
+      email: 'dawit.haile@noruhotel.com',
+      phone: '+251 92 234 5678',
       department: deptMap['HK'],
       role: roleMap['Room Attendant'],
       shift: shiftMap['MORN'],
@@ -221,10 +221,10 @@ export const autoSeed = async () => {
     },
     {
       employeeId: 'EMP-1007',
-      firstName: 'Amina',
-      lastName: 'Diallo',
-      email: 'amina.diallo@noruhotel.com',
-      phone: '+1 (555) 345-6783',
+      firstName: 'Helen',
+      lastName: 'Worku',
+      email: 'helen.worku@noruhotel.com',
+      phone: '+251 92 345 6789',
       department: deptMap['HK'],
       role: roleMap['Room Attendant'],
       shift: shiftMap['AFTN'],
@@ -232,10 +232,10 @@ export const autoSeed = async () => {
     },
     {
       employeeId: 'EMP-1008',
-      firstName: 'Jean-Pierre',
-      lastName: 'Dubois',
-      email: 'jp.dubois@noruhotel.com',
-      phone: '+1 (555) 456-7891',
+      firstName: 'Yohannes',
+      lastName: 'Gebre',
+      email: 'yohannes.gebre@noruhotel.com',
+      phone: '+251 93 123 4567',
       department: deptMap['KIT'],
       role: roleMap['Head Chef'],
       shift: shiftMap['MORN'],
@@ -243,10 +243,10 @@ export const autoSeed = async () => {
     },
     {
       employeeId: 'EMP-1009',
-      firstName: 'Kenji',
-      lastName: 'Takahashi',
-      email: 'kenji.takahashi@noruhotel.com',
-      phone: '+1 (555) 456-7892',
+      firstName: 'Natnael',
+      lastName: 'Kebede',
+      email: 'natnael.kebede@noruhotel.com',
+      phone: '+251 93 234 5678',
       department: deptMap['KIT'],
       role: roleMap['Line Cook'],
       shift: shiftMap['AFTN'],
@@ -254,10 +254,10 @@ export const autoSeed = async () => {
     },
     {
       employeeId: 'EMP-1010',
-      firstName: 'Isabella',
-      lastName: 'Moretti',
-      email: 'isabella.moretti@noruhotel.com',
-      phone: '+1 (555) 567-8901',
+      firstName: 'Mahlet',
+      lastName: 'Girma',
+      email: 'mahlet.girma@noruhotel.com',
+      phone: '+251 94 123 4567',
       department: deptMap['FNB'],
       role: roleMap['Restaurant Captain'],
       shift: shiftMap['AFTN'],
@@ -265,10 +265,10 @@ export const autoSeed = async () => {
     },
     {
       employeeId: 'EMP-1011',
-      firstName: 'Lucas',
-      lastName: 'Silva',
-      email: 'lucas.silva@noruhotel.com',
-      phone: '+1 (555) 567-8902',
+      firstName: 'Biruk',
+      lastName: 'Solomon',
+      email: 'biruk.solomon@noruhotel.com',
+      phone: '+251 94 234 5678',
       department: deptMap['FNB'],
       role: roleMap['Bartender'],
       shift: shiftMap['AFTN'],
@@ -276,10 +276,10 @@ export const autoSeed = async () => {
     },
     {
       employeeId: 'EMP-1012',
-      firstName: 'Viktor',
-      lastName: 'Novak',
-      email: 'viktor.novak@noruhotel.com',
-      phone: '+1 (555) 678-9011',
+      firstName: 'Tewodros',
+      lastName: 'Kassahun',
+      email: 'tewodros.kassahun@noruhotel.com',
+      phone: '+251 95 123 4567',
       department: deptMap['SEC'],
       role: roleMap['Security Lead'],
       shift: shiftMap['NGHT'],
@@ -287,10 +287,10 @@ export const autoSeed = async () => {
     },
     {
       employeeId: 'EMP-1013',
-      firstName: 'Tariq',
-      lastName: 'Al-Mansoor',
-      email: 'tariq.almansoor@noruhotel.com',
-      phone: '+1 (555) 678-9012',
+      firstName: 'Henok',
+      lastName: 'Fikru',
+      email: 'henok.fikru@noruhotel.com',
+      phone: '+251 95 234 5678',
       department: deptMap['SEC'],
       role: roleMap['Security Guard'],
       shift: shiftMap['NGHT'],
@@ -298,10 +298,10 @@ export const autoSeed = async () => {
     },
     {
       employeeId: 'EMP-1014',
-      firstName: 'Rachel',
-      lastName: 'Adams',
-      email: 'rachel.adams@noruhotel.com',
-      phone: '+1 (555) 678-9013',
+      firstName: 'Senait',
+      lastName: 'Desta',
+      email: 'senait.desta@noruhotel.com',
+      phone: '+251 95 345 6789',
       department: deptMap['SEC'],
       role: roleMap['Security Guard'],
       shift: shiftMap['MORN'],
@@ -309,10 +309,10 @@ export const autoSeed = async () => {
     },
     {
       employeeId: 'EMP-1015',
-      firstName: 'Liam',
-      lastName: 'O\'Connor',
-      email: 'liam.oconnor@noruhotel.com',
-      phone: '+1 (555) 345-6784',
+      firstName: 'Betelhem',
+      lastName: 'Assefa',
+      email: 'betelhem.assefa@noruhotel.com',
+      phone: '+251 92 456 7890',
       department: deptMap['HK'],
       role: roleMap['Room Attendant'],
       shift: shiftMap['NGHT'],
@@ -320,11 +320,11 @@ export const autoSeed = async () => {
     },
   ]);
 
-  // 5. 14-day Attendance history
+  // 5. 14-day Historical Attendance (dayOffset 1 to 14, leaving today unclocked for live demonstration)
   const attendanceRecords = [];
   const today = new Date();
 
-  for (let dayOffset = 13; dayOffset >= 0; dayOffset--) {
+  for (let dayOffset = 14; dayOffset >= 1; dayOffset--) {
     const targetDate = new Date(today);
     targetDate.setDate(today.getDate() - dayOffset);
     const dateStr = targetDate.toISOString().split('T')[0];
@@ -388,5 +388,5 @@ export const autoSeed = async () => {
   }
 
   await Attendance.insertMany(attendanceRecords);
-  console.log(`[Seed Helper] Successfully populated 5 departments, 11 roles, 3 shifts, ${employees.length} employees, and ${attendanceRecords.length} attendance records.`);
+  console.log(`[Seed Helper] Successfully populated 5 departments, 11 roles, 3 shifts, ${employees.length} Ethiopian employees, and ${attendanceRecords.length} historical attendance records.`);
 };
